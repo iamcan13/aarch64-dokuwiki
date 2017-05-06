@@ -1,2 +1,2 @@
-# mediawiki
-Project for dockerize mediawiki
+# aarch64-dokuwiki
+Project for dockerize dokuwiki on aarch64
