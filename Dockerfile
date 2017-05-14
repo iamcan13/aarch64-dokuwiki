@@ -1,17 +1,17 @@
-FROM alpine:3.5
+FROM aarch64/php:7.1-apache
 
-ENV VERSION=1.28.1
+COPY dokuwiki.tgz /tmp/
+COPY wrapper /bin/
 
-RUN apk update && \
-    apk add nginx php5 && \
-    mkdir -p /run/nginx && \
-    mkdir -p /nginx/conf /nginx/logs && \
-    mkdir -p /mediawiki && \
-    echo "hello world!"
-
-ADD conf/nginx.conf /nginx/conf/nginx.conf
-ADD scripts/wrapper /bin/wrapper
-#RUN tar xvzf /tmp/mediawiki-${VERSION}.tar.gz
+RUN echo "start!" && \
+    cd /tmp && \
+    tar xvzf dokuwiki.tgz && \
+    mv /tmp/dokuwiki /dokuwiki && \
+    chmod -R 777 /dokuwiki/conf && \
+    chmod -R 777 /dokuwiki/data && \
+    chmod -R 777 /dokuwiki/lib/plugins && \
+    chmod -R 777 /dokuwiki/lib/tpl && \
+    ln -s /dokuwiki /var/www/html/dokuwiki
 
 ENTRYPOINT ["/bin/wrapper"]
-CMD ["/usr/sbin/nginx", "-c", "/nginx/conf/nginx.conf"]
+CMD ["/usr/sbin/apache2", "-DNO_DETACH", "-DFOREGROUND"]
